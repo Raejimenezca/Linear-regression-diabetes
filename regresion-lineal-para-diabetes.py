@@ -6,6 +6,7 @@ Created on Mon Apr  8 11:36:54 2019
 """
 
 import pandas as pd
+import tensorflow as tf
 import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
@@ -44,6 +45,37 @@ plt.plot(X)
 
 plt.figure(1)
 plt.plot(Y)
+
+##
+## datos
+##
+x = tf.constant(X)
+d = tf.constant(Y)
+
+## parámetros
+w0 = tf.Variable(2.5)
+w1 = tf.Variable(2.5)
+
+## Define el modelo
+m = tf.add(tf.multiply(x, w1), w0)
+
+## Define la función de error
+sse = tf.reduce_sum(tf.square(d - m)) # sum of the squared errors
+
+## Inicializa el optimizador
+optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.03)
+
+## Minimiza la función de error
+opt = optimizer.minimize(sse)
+
+## estima el modelo
+with tf.Session() as sess:
+    sess.run(tf.global_variables_initializer())
+    for i in range(20):
+        sess.run(opt)
+        if (i % 5 == 0):
+            print(sess.run(sse))
+    print('\nValores encontrados\n\n  w0 = {:f}\n  w1 = {:f}'.format(sess.run(w0), sess.run(w1)))
 
 ###
 ### Sumatoria del error cuadrático
